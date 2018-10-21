@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use File::Copy;
 
-my $TEMPLATE = "/Users/crabb/bin/empty.adf";
+my $TEMPLATE = "/Users/crabb/bin/unix_tools/empty.adf";
 
 my $num = 0;
 while ( 1 )
