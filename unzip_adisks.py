@@ -7,12 +7,12 @@ import re
 import sys
 import filetype
 
-
-
 def normalize_name(file_name):
     lc_name = file_name.lower()
     no_spaces_name = re.sub( "[\s-]+", "_", lc_name )
-    return no_spaces_name
+    no_brackets_name = re.sub( "[\[\]\(\)\{\}]+", "_", no_spaces_name )
+    no_apos_name = re.sub( "\'", "", no_brackets_name )
+    return no_apos_name
 
 
 def normalize_files( extension ):
@@ -32,7 +32,7 @@ def gunzip_file( file_name ):
     try:
         parts = splitext( file_name )
         ext = parts[ 1 ]
-        system( f"gunzip --suffix {ext} {file_name}" )
+        system( f"yes | gunzip --suffix {ext} {file_name}" )
     except Exception as e:
         print( e, file=sys.stderr )
         print( f"Hit an error gunzipping file {file_name}", file=sys.stderr )
@@ -51,6 +51,10 @@ def unzip_file( file_name ):
 
 def uncompress_files():
     for f in listdir("."):
+
+        if not isfile( f ):
+            continue
+
         kind = filetype.guess( f )
         if not kind:
             continue
@@ -58,9 +62,19 @@ def uncompress_files():
         if kind.extension == "gz":
             gunzip_file( f ) 
         if kind.extension == "zip":
-           unzip_file( f )
+            unzip_file( f )
 
     return
+
+
+
+def rn_file( old_name, new_name ):
+    try:
+        rename( old_name, new_name )
+    except Exception as e:
+        print( e, file=sys.stderr )
+        print( f"Hit an error renaming {old_name} to {new_name}", file=sys.stderr )
+        
 
 def uncompress_adz_files():
     for f in listdir("."):
@@ -69,8 +83,7 @@ def uncompress_adz_files():
         fext  = parts[ 1 ]
         if fext.lower() == ".adz":
             gunzip_file( f )
-            rename( fname, f"{fname}.adf" )
-    
+            rn_file( fname, f"{fname}.adf" )
     
 def main():
     normalize_files( ".zip" )
@@ -79,10 +92,6 @@ def main():
     uncompress_files()
     normalize_files( ".adz" )
     uncompress_adz_files()
-    normalize_files( ".adf" )
-
-
-
     normalize_files( ".adf" )
 
 main()
