@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from os import listdir, rename, system
-from os.path import isfile, join
+from os.path import isfile, join, splitext
 import zipfile
 import re
 import sys
@@ -24,28 +24,41 @@ def normalize_files( extension ):
         old_name = f
         normalized_name = normalize_name(old_name)
         rename( old_name, normalized_name )
-        print( f"renamed {old_name} to {normalized_name}", file=sys.stderr )
+        print( f"renamed {old_name} to {normalized_name}" )
 
     return
 
-def unzip_files( extension ):
-    for f in listdir("."):
-        if not f.lower().endswith( extension ):
-            continue
+def gunzip_file( file_name ):
+    try:
+        parts = splitext( file_name )
+        ext = parts[ 1 ]
+        system( f"gunzip --suffix {ext} {file_name}" )
+    except Exception as e:
+        print( e, file=sys.stderr )
+        print( f"Hit an error gunzipping file {file_name}", file=sys.stderr )
 
-        print( f"unzipping {f}", file=sys.stderr )
-        with zipfile.ZipFile( f ) as z_obj:
+
+def unzip_file( file_name ):
+    try:
+        print( f"Unzipping file {file_name}" )
+        with zipfile.ZipFile( file_name ) as z_obj:
             z_obj.extractall( path="." )
+    except Exception as e:
+        print( e, file=sys.stderr )
+        print( f"Hit an error unzipping file {file_name}", file=sys.stderr )
 
-    return
 
-def uncompress_files( extension ):
+
+def uncompress_files():
     for f in listdir("."):
-        if not f.lower().endswith( extension ):
+        kind = filetype.guess( f )
+        if not kind:
             continue
 
-        print( f"gunzipping {f}", file=sys.stderr )
-        system( f"gunzip --suffix {extension} {f}" )
+        if kind.extension == "gz":
+            gunzip_file( f ) 
+        if kind.extension == "zip":
+           unzip_file( f )
 
     return
     
@@ -54,10 +67,8 @@ def main():
     normalize_files( ".zip" )
     uncompress_files()
 
-
-    unzip_files( ".zip" )
-    uncompress_files( ".adz" )
     normalize_files( ".adf" )
+
 
 main()
 
