@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from os import listdir, rename, system
+from os import listdir, rename, system, rename
 from os.path import isfile, join, splitext
 import zipfile
 import re
@@ -61,14 +61,29 @@ def uncompress_files():
            unzip_file( f )
 
     return
+
+def uncompress_adz_files():
+    for f in listdir("."):
+        parts = splitext( f )
+        fname = parts[ 0 ]
+        fext  = parts[ 1 ]
+        if fext.lower() == ".adz":
+            gunzip_file( f )
+            rename( fname, f"{fname}.adf" )
     
     
 def main():
     normalize_files( ".zip" )
+    normalize_files( ".gz"  )
+    normalize_files( ".gzip" )
     uncompress_files()
-
+    normalize_files( ".adz" )
+    uncompress_adz_files()
     normalize_files( ".adf" )
 
+
+
+    normalize_files( ".adf" )
 
 main()
 
