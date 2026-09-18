@@ -17,4 +17,4 @@ for cnt, ln in enumerate( sys.stdin ):
 
 for line in lines:
     cnt = lines[ line ]
-    print( f"{line}\t{cnt}" )
+    print( f"{cnt}\t{line}" )
