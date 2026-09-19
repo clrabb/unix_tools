@@ -1,32 +1,13 @@
 #!/usr/bin/python3
 
-from os import listdir, rename, system, rename
+from os import listdir, rename, system 
 from os.path import isfile, join, splitext
 import zipfile
 import re
 import sys
 import filetype
+from adisk_utils import normalize_name, normalize_files
 
-def normalize_name(file_name):
-    lc_name = file_name.lower()
-    no_spaces_name = re.sub( "[\s-]+", "_", lc_name )
-    no_brackets_name = re.sub( "[\[\]\(\)\{\}]+", "_", no_spaces_name )
-    no_apos_name = re.sub( "\'", "", no_brackets_name )
-    return no_apos_name
-
-
-def normalize_files( extension ):
-    for f in listdir("."):
-        f_lc = f.lower()
-        if not f_lc.endswith( extension ):
-            continue
-
-        old_name = f
-        normalized_name = normalize_name(old_name)
-        rename( old_name, normalized_name )
-        print( f"renamed {old_name} to {normalized_name}" )
-
-    return
 
 def gunzip_file( file_name ):
     try:
@@ -35,7 +16,7 @@ def gunzip_file( file_name ):
         system( f"yes | gunzip --suffix {ext} {file_name}" )
     except Exception as e:
         print( e, file=sys.stderr )
-        print( f"Hit an error gunzipping file {file_name}", file=sys.stderr )
+        print( f"Hit an error gunzipping file {file_name}" )
 
 
 def unzip_file( file_name ):
@@ -46,8 +27,6 @@ def unzip_file( file_name ):
     except Exception as e:
         print( e, file=sys.stderr )
         print( f"Hit an error unzipping file {file_name}", file=sys.stderr )
-
-
 
 def uncompress_files():
     for f in listdir("."):
@@ -66,8 +45,6 @@ def uncompress_files():
 
     return
 
-
-
 def rn_file( old_name, new_name ):
     try:
         rename( old_name, new_name )
@@ -75,7 +52,6 @@ def rn_file( old_name, new_name ):
         print( e, file=sys.stderr )
         print( f"Hit an error renaming {old_name} to {new_name}", file=sys.stderr )
         
-
 def uncompress_adz_files():
     for f in listdir("."):
         parts = splitext( f )
