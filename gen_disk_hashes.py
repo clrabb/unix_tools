@@ -20,7 +20,7 @@ def create_hash_map( disk_map ):
             continue
 
         if num_disks % 100 == 0:
-            print( f"Disks examined: {num_disks}" )
+            print( f"Disks examined: {num_disks}", flush=True )
 
         num_disks += 1
         disk_hash = gen_hash( file_name )
@@ -39,6 +39,6 @@ def main():
         names = disk_map[ disk_hash ]
         if len( names ) > 1:
             for name in names:
-                print( f"{disk_hash}\t{name}" )
+                print( f"{disk_hash}\t{name}", flush=True )
 
 main()

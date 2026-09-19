@@ -6,9 +6,10 @@ from os import system, listdir, rename
 def normalize_name(file_name):
     lc_name = file_name.lower()
     no_spaces_name = re.sub( "[\s-]+", "_", lc_name )
-    no_brackets_name = re.sub( "[^A-Za-z0-9_\.]", "_", no_spaces_name )
-    no_apos_name = re.sub( "\'", "", no_brackets_name )
-    return no_apos_name
+    only_letters_and_numbers = re.sub( "[^A-Za-z0-9_\.]", "_", no_spaces_name )
+    dedup_underscores = re.sub( "_+","_", only_letters_and_numbers )
+    normalized = re.sub( "\'", "", dedup_underscores )
+    return normalized
 
 def normalize_files( extension ):
     for f in listdir("."):
